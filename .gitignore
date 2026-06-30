@@ -1,0 +1,7 @@
+heartdisease/
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+mlruns/
+*.pyc
+.DS_Store
