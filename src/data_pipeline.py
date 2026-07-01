@@ -4,14 +4,17 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+
 numeric_features = ["age", "trestbps", "chol", "thalach", "oldpeak"]
 categorical_features = ["sex", "cp", "fbs", "restecg",
                         "exang", "slope", "ca", "thal"]
 target_col = "target"
 
+
 def load_raw_data(path: str = "data/cleveland_heart.csv") -> pd.DataFrame:
     df = pd.read_csv(path)
     return df
+
 
 def build_preprocessor() -> ColumnTransformer:
     numeric_transformer = Pipeline(steps=[

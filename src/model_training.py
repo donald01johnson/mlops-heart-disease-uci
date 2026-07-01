@@ -1,17 +1,34 @@
 import mlflow
 import mlflow.sklearn
-import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import joblib
 
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
-from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix, roc_curve)
+from sklearn.model_selection import (
+    train_test_split,
+    GridSearchCV,
+    StratifiedKFold
+)
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    confusion_matrix,
+    roc_curve
+)
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
-from data_pipeline import load_raw_data, build_preprocessor, numeric_features, categorical_features, target_col
+from src.data_pipeline import (
+    load_raw_data,
+    build_preprocessor,
+    numeric_features,
+    categorical_features,
+    target_col,
+)
 
 
 def get_train_test_data(test_size: float = 0.2, random_state: int = 42):
@@ -48,7 +65,13 @@ def build_models(preprocessor):
     return lr_pipeline, rf_pipeline
 
 
-def hyperparameter_tuning(model_pipeline, param_grid, X_train, y_train, cv_splits=5):
+def hyperparameter_tuning(
+    model_pipeline,
+    param_grid,
+    X_train,
+    y_train,
+    cv_splits=5
+):
     cv = StratifiedKFold(n_splits=cv_splits, shuffle=True, random_state=42)
 
     grid_search = GridSearchCV(
@@ -76,7 +99,8 @@ def evaluate_model(best_model, X_test, y_test):
         "roc_auc": roc_auc_score(y_test, y_proba),
     }
     return metrics
-    
+
+
 def log_metrics_to_mlflow(metrics: dict):
     for name, value in metrics.items():
         mlflow.log_metric(name, value)
@@ -150,7 +174,12 @@ def main():
 
     # Logistic Regression run
     with mlflow.start_run(run_name="LogisticRegression"):
-        lr_grid = hyperparameter_tuning(lr_pipeline, lr_param_grid, X_train, y_train)
+        lr_grid = hyperparameter_tuning(
+            lr_pipeline,
+            lr_param_grid,
+            X_train,
+            y_train
+        )
         lr_best = lr_grid.best_estimator_
         lr_metrics = evaluate_model(lr_best, X_test, y_test)
 
@@ -170,14 +199,19 @@ def main():
 
         # Log model
         mlflow.sklearn.log_model(
-        	lr_best,
-        	name="model_lr",
-        	serialization_format="pickle"
+            lr_best,
+            name="model_lr",
+            serialization_format="pickle"
         )
 
     # Random Forest run
     with mlflow.start_run(run_name="RandomForest"):
-        rf_grid = hyperparameter_tuning(rf_pipeline, rf_param_grid, X_train, y_train)
+        rf_grid = hyperparameter_tuning(
+            rf_pipeline,
+            rf_param_grid,
+            X_train,
+            y_train
+        )
         rf_best = rf_grid.best_estimator_
         rf_metrics = evaluate_model(rf_best, X_test, y_test)
 
@@ -194,15 +228,16 @@ def main():
         log_roc_curve(y_test, y_proba_rf, prefix="RF")
 
         mlflow.sklearn.log_model(
-        	rf_best,
-        	name="model_rf",
-        	serialization_format="pickle"
+            rf_best,
+            name="model_rf",
+            serialization_format="pickle"
         )
-        
+
     # Save final RF pipeline (preprocessor + model) for API usage
     os.makedirs("models", exist_ok=True)
     joblib.dump(rf_best, "models/final_model_rf.pkl")
     print("Saved final Random Forest pipeline to models/final_model_rf.pkl")
+
 
 if __name__ == "__main__":
     main()

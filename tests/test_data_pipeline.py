@@ -1,4 +1,3 @@
-import pandas as pd
 from src.data_pipeline import (
     load_raw_data,
     build_preprocessor,

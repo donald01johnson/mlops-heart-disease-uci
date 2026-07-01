@@ -20,12 +20,10 @@ def test_build_models_pipelines():
     preprocessor = build_preprocessor()
     lr_pipeline, rf_pipeline = build_models(preprocessor)
 
-    # Pipelines should have fit/predict methods
     assert hasattr(lr_pipeline, "fit")
     assert hasattr(lr_pipeline, "predict")
     assert hasattr(rf_pipeline, "fit")
     assert hasattr(rf_pipeline, "predict")
 
-    # Quick training on a subset to ensure they run
-    X_small = X_train.head(50)
-    y_small = y_train.head(50)
+    lr_pipeline.fit(X_train.head(50), y_train.head(50))
+    rf_pipeline.fit(X_train.head(50), y_train.head(50))
