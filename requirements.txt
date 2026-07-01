@@ -8,3 +8,5 @@ ucimlrepo
 scikit-learn
 mlflow
 joblib
+pytest
+flake8
