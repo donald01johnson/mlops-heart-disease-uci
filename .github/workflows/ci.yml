@@ -50,4 +50,4 @@ jobs:
 
       - name: Run model training (with MLflow)
         run: |
-          python src/model_training.py
+          python -m src.model_training
