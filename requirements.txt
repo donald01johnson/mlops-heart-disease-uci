@@ -10,3 +10,6 @@ mlflow
 joblib
 pytest
 flake8
+fastapi
+uvicorn
+prometheus-client

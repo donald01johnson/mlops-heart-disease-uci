@@ -5,3 +5,11 @@ __pycache__/
 mlruns/
 *.pyc
 .DS_Store
+
+# Local runtime artifacts
+mlflow.db
+mlruns/
+heartdisease/
+__pycache__/
+.pytest_cache/
+*.pyc
